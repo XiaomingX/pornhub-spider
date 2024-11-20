@@ -1,4 +1,17 @@
 
+## Usage
+
+```sh
+git clone https://github.com/XiaomingX/pornhub-spider
+cd pornhub-spider && pip install -r requirements.txt
+# Edit the settings.toml file to configure `proxy_url` and specify your preferred list pages.
+python3 crawler.py webm
+# After the script finishes running, webm thumbnails from two pages will be downloaded into the `webm` folder.
+# The filenames will match the URL suffix of the corresponding detail pages. Select the videos you wish to keep.
+python3 crawler.py mp4
+# You can find the downloaded MP4 files in the `mp4` folder.
+```
+
 ## 用法
 
 ```sh
