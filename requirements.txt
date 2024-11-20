@@ -5,3 +5,5 @@ js2py
 clint
 fire
 loguru
+dynaconf
+youtube-dl

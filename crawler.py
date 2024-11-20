@@ -15,14 +15,18 @@ settings = Dynaconf(settings_files=["settings.toml"])
 # 配置日志记录
 logger.add("logs/stdout.log", format="{time:MM-DD HH:mm:ss} {level} {message}")
 
-# 请求头和代理配置
+# 请求头配置
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.84 Safari/537.36",
 }
+
+# 代理配置
 PROXIES = {
-    "http": settings.proxy_url,
-    "https": settings.proxy_url,
+    "http": "http://127.0.0.1:7890",
+    "https": "http://127.0.0.1:7890",
+    "all": "socks5://127.0.0.1:7890",
 }
+
 
 # 创建文件夹
 def create_directory(directory):
@@ -31,6 +35,7 @@ def create_directory(directory):
         logger.info(f"创建目录: {directory}")
     else:
         logger.info(f"目录已存在: {directory}")
+
 
 # 下载文件
 def download_file(url, name, filetype):
@@ -48,6 +53,7 @@ def download_file(url, name, filetype):
     except Exception as err:
         logger.error(f"下载失败: {err}")
 
+
 # 获取 webm 格式的文件
 def fetch_webm_files(page_url):
     logger.info(f"正在爬取页面: {page_url}")
@@ -56,18 +62,22 @@ def fetch_webm_files(page_url):
         response.raise_for_status()
         html = etree.HTML(response.text)
 
-        base_xpath = '//*[@id="moreData"]//*[@class="phimage"]/a/'
+        base_xpath = '//*[@class="phimage"]/a/'
         video_urls = html.xpath(f"{base_xpath}img/@data-mediabook")
-        video_names = html.xpath(f"{base_xpath}@href")
+        video_names = html.xpath(f"{base_xpath}/@href")
 
         for video_url, name_path in zip(video_urls, video_names):
             try:
-                name = re.search(r"=ph(\w+)", name_path).group(1)
+                print(name_path)
+                print(video_url)
+                name = re.search(r"=(\w+)", name_path).group(1)
+                print(name)
                 download_file(video_url, name, "webm")
             except Exception as err:
                 logger.error(f"解析失败: {err}")
     except Exception as err:
         logger.error(f"页面爬取失败: {err}")
+
 
 # 下载 mp4 文件
 def download_mp4_files(video_urls):
@@ -75,10 +85,11 @@ def download_mp4_files(video_urls):
     ydl_opts = {
         "ignoreerrors": True,
         "outtmpl": "mp4/%(extractor)s-%(id)s-%(title)s.%(ext)s",
-        "proxy": settings.proxy_url,
+        "proxy": "http://127.0.0.1:7890",  # 设置 youtube_dl 的代理
     }
     with youtube_dl.YoutubeDL(ydl_opts) as ydl:
         ydl.download(video_urls)
+
 
 # 运行程序
 def run(task_type=None):
@@ -103,9 +114,11 @@ def run(task_type=None):
         """)
     logger.info("任务完成！")
 
+
 # 主函数
 def main():
     fire.Fire(run)
+
 
 if __name__ == "__main__":
     main()

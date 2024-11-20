@@ -1,4 +1,4 @@
-proxy_url = ''
+proxy_url = '127.0.0.1:7890'
 
 urls = [
   # https://www.pornhub.com/categories
