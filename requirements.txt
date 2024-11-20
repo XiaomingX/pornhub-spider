@@ -1,0 +1,7 @@
+requests
+pysocks
+lxml
+js2py
+clint
+fire
+loguru
