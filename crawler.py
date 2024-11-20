@@ -8,6 +8,9 @@ from loguru import logger
 from dynaconf import Dynaconf
 import youtube_dl
 import fire
+import urllib3
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
 
 # 加载配置文件
 settings = Dynaconf(settings_files=["settings.toml"])
@@ -101,7 +104,7 @@ def run(task_type=None):
             fetch_webm_files(url)
     elif task_type == "mp4":
         downloaded_keys = [filename.split(".")[0] for filename in os.listdir("webm")]
-        video_urls = [f"https://www.pornhub.com/view_video.php?viewkey=ph{key}" for key in downloaded_keys]
+        video_urls = [f"https://www.pornhub.com/view_video.php?viewkey={key}" for key in downloaded_keys]
         download_mp4_files(video_urls)
     else:
         logger.info("""
